@@ -7,8 +7,8 @@ int main(int ac, char **av)
 	{
 		if (ac != 2)
 			throw std::invalid_argument("Program must be given a filename as argument");
-
-
+		BitcoinExchange();
+		(void)av;
 	}
 	catch(std::exception & e)
 	{
