@@ -22,7 +22,7 @@ void	get_part_date(int & struct_date, std::string date, int & x)
 	while (date[x] && date[x] != '-')
 	{
 		if (date[x] < '0' || date[x] > '9')
-			throw std::runtime_error("Error : incorrect date");
+			throw std::runtime_error("Error : date must be a set of integers");
 		date_str += date[x];
 		x++;
 	}
@@ -59,9 +59,11 @@ void	convert_line(std::string line, std::map<t_date,double> & map, char delimite
 		i++;
 	while (line[i] && line[i] != delimiter && line[i] != ' ')
 		date += line[i++];
-	while (line[++i] && (line[i] == ' ' || line[i] == delimiter))
+	while (line[i] && line[++i] && (line[i] == ' ' || line[i] == delimiter))
 		;
 	int x = 0;
+	if (date[x] == '-')
+		x++;
 	get_part_date(date_struct._year, date, x);
 	get_part_date(date_struct._month, date, ++x);
 	get_part_date(date_struct._day, date, ++x);
@@ -69,13 +71,11 @@ void	convert_line(std::string line, std::map<t_date,double> & map, char delimite
 	while (line[i])
 	{
 		if (line[i] != '.' && (line[i] < '0' || line[i] > '9'))
-			throw std::invalid_argument("Error : value must be a number");
+			throw std::invalid_argument("Error : value must be a positive integer");
 		value += line[i];
 		i++;
 	}
 	_value = std::atof(value.c_str());
-	if (_value < 0)
-		throw std::invalid_argument("Error : value must be positive");
 	map[date_struct] = _value;
 }
 
@@ -100,7 +100,7 @@ BitcoinExchange::BitcoinExchange()
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << " in data file" << std::endl;
+		std::cout << e.what() << " (data file)" << std::endl;
 	}
 }
 
@@ -125,7 +125,7 @@ BitcoinExchange::BitcoinExchange(std::string data_filename)
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << " in data file" << std::endl;
+		std::cout << e.what() << " (data file)" << std::endl;
 	}
 }
 
@@ -149,7 +149,7 @@ BitcoinExchange & BitcoinExchange::operator=(BitcoinExchange & b)
 void	calculate_line(std::map<t_date, double> input, std::map<t_date, double> data)
 {
 	std::map<t_date, double>::iterator it = data.find(input.begin()->first);
-	std::map<t_date, double>::iterator prev = it;
+	std::map<t_date, double>::iterator prev;
 
 	if (it != data.end())
 	{
@@ -157,6 +157,7 @@ void	calculate_line(std::map<t_date, double> input, std::map<t_date, double> dat
 		return ;
 	}
 	it = data.begin();
+	prev = it;
 	while (it != data.end())
 	{
 		if (input.begin()->first < it->first)
@@ -170,6 +171,7 @@ void	calculate_line(std::map<t_date, double> input, std::map<t_date, double> dat
 		prev = it;
 		it++;
 	}
+	std::cout << input.begin()->first << " => " << input.begin()->second << " = " << data.rbegin()->second * input.begin()->second << std::endl;
 }
 
 void	try_convert(std::string line, std::map<t_date, double> data)
@@ -185,7 +187,7 @@ void	try_convert(std::string line, std::map<t_date, double> data)
 	}
 	catch (std::exception & e)
 	{
-		std::cout << e.what() << " in input file" << std::endl;
+		std::cout << e.what() << " (input file)" << std::endl;
 	}
 }
 
