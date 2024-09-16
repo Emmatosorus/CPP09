@@ -10,5 +10,5 @@ bool	is_number(std::string nbr)
 
 int	jacobsthal(int index)
 {
-	return (   (pow(-1, index-1) + pow(2, index)) / 3   );
+	return (int)( (pow(-1, index-1) + pow(2, index)) / 3 );
 }
