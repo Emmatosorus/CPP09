@@ -51,15 +51,39 @@ void	parse(char **input, T & container)
 }
 
 template <typename T>
+void	pair_up(std::pair<int, int> **pairs, T & container )
+{
+	*pairs = new std::pair<int, int>[(int)(std::ceil(container.size() / 2))];
+
+	int i = 0;
+	int pair_index = 0;
+	while (container[i])
+	{
+		if (!container[i + 1])
+			(*pairs)[pair_index] = std::make_pair(container[i], -1);
+		else
+			(*pairs)[pair_index] = std::make_pair(container[i], container[i + 1]);
+//		std::cout << (*pairs)[pair_index].first << ", " << (*pairs)[pair_index].second;
+		i += 2;
+		pair_index++;
+	}
+}
+
+template <typename T>
 void	sort( T & container )
 {
 	T	sorted;
-	(void)container;
-	std::cout << "jacobsthal :";
-	for (int i = 0; i < 20; i++)
-		std::cout << " " << jacobsthal(i);
-	std::cout << std::endl;
+	std::pair<int, int>	*pairs;
+
+
+	pair_up(&pairs, container);
+
+
 	// sort
+
+	for (int i = 0; i <= (int)(std::ceil(container.size() / 2)); i++)
+		std::cout << pairs[i].first << ", " << pairs[i].second << std::endl;
+	delete pairs;
 }
 
 
