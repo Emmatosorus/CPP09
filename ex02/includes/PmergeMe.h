@@ -1,16 +1,24 @@
 #ifndef PMERGEME_H
 #define PMERGEME_H
 
+// **** includes ****
 #include <iostream>
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
 #include <ctime>
+#include <stdint.h>
 #include <vector>
 #include <deque>
 
+// **** function prototypes ****
+
 bool	is_number(std::string nbr);
 int		jacobsthal(int index);
+int		get_value(std::pair<void *, void *> *pairs, int depth);
+
+
+// **** template functions ****
 
 template <typename T>
 bool is_exclusive(T container, int nb)
@@ -51,39 +59,97 @@ void	parse(char **input, T & container)
 }
 
 template <typename T>
-void	pair_up(std::pair<int, int> **pairs, T & container )
+void	pair_up(std::pair<void *, void *> *&o_pairs, T & container, int & odd)
 {
-	*pairs = new std::pair<int, int>[(int)(std::ceil(container.size() / 2))];
+	std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[(int)std::floor(container.size() / 2)];
 
-	int i = 0;
+	size_t i = 0;
 	int pair_index = 0;
-	while (container[i])
+	while (i < container.size())
 	{
-		if (!container[i + 1])
-			(*pairs)[pair_index] = std::make_pair(container[i], -1);
+		if (i + 1 >= container.size())
+		{
+			odd = container[i];
+			container.pop_back();
+		}
 		else
-			(*pairs)[pair_index] = std::make_pair(container[i], container[i + 1]);
-//		std::cout << (*pairs)[pair_index].first << ", " << (*pairs)[pair_index].second;
+		{
+			if (container[i] < container[i + 1])
+				n_pairs[pair_index] = std::make_pair(reinterpret_cast<void *>(container[i]), reinterpret_cast<void *>(container[i + 1]));
+			else
+				n_pairs[pair_index] = std::make_pair(reinterpret_cast<void *>(container[i + 1]), reinterpret_cast<void *>(container[i]));
+		}
 		i += 2;
 		pair_index++;
 	}
+	o_pairs = n_pairs;
+}
+
+template <typename T>
+std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & container, int depth)
+{
+	int	value1;
+	int	value2;
+	int	nb_pairs = container.size() / pow(2, depth);
+	if (nb_pairs == 2)
+	{
+		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>;
+		value1 = get_value(&o_pairs[0], depth + 1);
+		value2 = get_value(&o_pairs[1], depth);
+		if (value1 < value2)
+			*n_pairs = std::make_pair(reinterpret_cast<void *>(&n_pairs[0]), reinterpret_cast<void *>(&n_pairs[1]));
+		else
+			*n_pairs = std::make_pair(reinterpret_cast<void *>(&n_pairs[1]), reinterpret_cast<void *>(&n_pairs[0]));
+		delete [] o_pairs;
+		return (n_pairs);
+	}
+	else
+	{
+		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[(int)(container.size() / pow(2, depth + 1))];
+		int i = 0;
+		int i2 = 0;
+		while (i < nb_pairs)
+		{
+			value1 = get_value(&o_pairs[i], depth - 1);
+			value2 = get_value(&o_pairs[i + 1], depth - 1);
+			if (value1 < value2)
+				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&n_pairs[i]), reinterpret_cast<void *>(&n_pairs[i + 1]));
+			else
+				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&n_pairs[i + 1]), reinterpret_cast<void *>(&n_pairs[i]));
+			i += 2;
+			i2++;
+		}
+		delete [] o_pairs;
+		return (pair_down(n_pairs, container, depth + 1));
+	}
+
 }
 
 template <typename T>
 void	sort( T & container )
 {
 	T	sorted;
-	std::pair<int, int>	*pairs;
+	std::pair<void *, void *>	*pairs = 0;
+	int	odd = -1;
 
 
-	pair_up(&pairs, container);
+	pair_up(pairs, container, odd);
 
-
+	pair_down(pairs, container, 1);
 	// sort
 
-	for (int i = 0; i <= (int)(std::ceil(container.size() / 2)); i++)
-		std::cout << pairs[i].first << ", " << pairs[i].second << std::endl;
-	delete pairs;
+	int test = static_cast<int>(reinterpret_cast<intptr_t>(pairs->first));
+	int test2 = static_cast<int>(reinterpret_cast<intptr_t>(pairs->second));
+	std::cout << test << ", " << test2 << std::endl;
+//	for (int i = 0; i < (int)(std::floor(container.size() / 2)); i++)
+//	{
+//		int test = static_cast<int>(reinterpret_cast<intptr_t>(pairs[i].first));
+//		int test2 = static_cast<int>(reinterpret_cast<intptr_t>(pairs[i].second));
+//		std::cout << test << ", " << test2 << std::endl;
+//	}
+	if (odd != -1)
+		std::cout << odd << std::endl;
+	delete [] pairs;
 }
 
 
