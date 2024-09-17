@@ -4,12 +4,13 @@
 
 int main(int ac, char **av)
 {
+//	std::cout << ac - 1 << std::endl;
 	try
 	{
-		clock_t	start;
-		clock_t	end;
+//		clock_t	start;
+//		clock_t	end;
 
-		start = clock();
+//		start = clock();
 
 
 		if (ac < 3)
@@ -18,15 +19,15 @@ int main(int ac, char **av)
 		parse(av, vector);
 		sort(vector);
 
-		end = clock();
+//		end = clock();
 
-		print(av, vector);
+//		print(av, vector);
 
-		std::cout << std::endl;
+//		std::cout << std::endl;
 
-		double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-		std::cout << std::fixed << std::setprecision(6);
-		std::cout << "Time to process a range of " << vector.size() << " elements with std::list : " << time_taken << " sec " << std::endl;
+//		double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
+//		std::cout << std::fixed << std::setprecision(6);
+//		std::cout << "Time to process a range of " << vector.size() << " elements with std::list : " << time_taken << " sec " << std::endl;
 	}
 	catch (std::exception & e)
 	{
