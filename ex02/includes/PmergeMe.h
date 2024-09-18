@@ -16,6 +16,7 @@
 bool	is_number(std::string nbr);
 int		jacobsthal(int index);
 int		get_value(std::pair<void *, void *> *pairs, int depth);
+void	delete_pair_down(std::pair<void *, void *> *pairs, int depth);
 
 
 // **** template functions ****
@@ -90,37 +91,43 @@ std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & co
 {
 	int	value1;
 	int	value2;
-	int	nb_pairs = container.size() / pow(2, depth);
+	int	nb_pairs = std::ceil(container.size() / pow(2, depth));
 	if (nb_pairs == 2)
 	{
-		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>;
-		value1 = get_value(&o_pairs[0], depth + 1);
-		value2 = get_value(&o_pairs[1], depth);
+		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[1];
+		value1 = get_value(&o_pairs[0], depth - 1);
+		value2 = get_value(&o_pairs[1], depth - 1);
 		if (value1 < value2)
-			*n_pairs = std::make_pair(reinterpret_cast<void *>(&n_pairs[0]), reinterpret_cast<void *>(&n_pairs[1]));
+			*n_pairs = std::make_pair(reinterpret_cast<void *>(&o_pairs[0]), reinterpret_cast<void *>(&o_pairs[1]));
 		else
-			*n_pairs = std::make_pair(reinterpret_cast<void *>(&n_pairs[1]), reinterpret_cast<void *>(&n_pairs[0]));
-		delete [] o_pairs;
+			*n_pairs = std::make_pair(reinterpret_cast<void *>(&o_pairs[1]), reinterpret_cast<void *>(&o_pairs[0]));
 		return (n_pairs);
 	}
 	else
 	{
-		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[(int)(container.size() / pow(2, depth + 1))];
+		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[(int)(std::ceil(container.size() / pow(2, depth + 1)))];
 		int i = 0;
 		int i2 = 0;
 		while (i < nb_pairs)
 		{
 			value1 = get_value(&o_pairs[i], depth - 1);
-			value2 = get_value(&o_pairs[i + 1], depth - 1);
-			if (value1 < value2)
-				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&n_pairs[i]), reinterpret_cast<void *>(&n_pairs[i + 1]));
+			if (i + 1 == nb_pairs)
+				value2 = -1;
 			else
-				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&n_pairs[i + 1]), reinterpret_cast<void *>(&n_pairs[i]));
-			i += 2;
+				value2 = get_value(&o_pairs[i + 1], depth - 1);
+			if (value1 < value2 && value2 >= 0)
+				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&o_pairs[i]), reinterpret_cast<void *>(&o_pairs[i + 1]));
+			else if (value2 >= 0)
+				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&o_pairs[i + 1]), reinterpret_cast<void *>(&o_pairs[i]));
+			else
+				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&o_pairs[i]), (void *)0);
 			i2++;
+//			if (i + 1 == nb_pairs)
+//				n_pairs[i2] = std::make_pair(reinterpret_cast<void *>(&o_pairs[i + 1]), (void *)0);
+			i += 2;
 		}
-		delete [] o_pairs;
-		return (pair_down(n_pairs, container, depth + 1));
+		std::pair<void *, void *>	*ptr = pair_down(n_pairs, container, depth + 1);
+		return (ptr);
 	}
 
 }
@@ -130,26 +137,21 @@ void	sort( T & container )
 {
 	T	sorted;
 	std::pair<void *, void *>	*pairs = 0;
+	std::pair<void *, void *>	*new_pairs = 0;
 	int	odd = -1;
 
 
 	pair_up(pairs, container, odd);
 
-	pair_down(pairs, container, 1);
+	new_pairs = pair_down(pairs, container, 1);
 	// sort
 
-	int test = static_cast<int>(reinterpret_cast<intptr_t>(pairs->first));
-	int test2 = static_cast<int>(reinterpret_cast<intptr_t>(pairs->second));
+	int test = get_value(new_pairs, 3);
+	int test2 = get_value(reinterpret_cast<std::pair<void *, void *> *>(new_pairs->second), 2);
 	std::cout << test << ", " << test2 << std::endl;
-//	for (int i = 0; i < (int)(std::floor(container.size() / 2)); i++)
-//	{
-//		int test = static_cast<int>(reinterpret_cast<intptr_t>(pairs[i].first));
-//		int test2 = static_cast<int>(reinterpret_cast<intptr_t>(pairs[i].second));
-//		std::cout << test << ", " << test2 << std::endl;
-//	}
 	if (odd != -1)
 		std::cout << odd << std::endl;
-	delete [] pairs;
+	delete_pair_down(new_pairs, 3);
 }
 
 
