@@ -22,3 +22,15 @@ int	get_value(std::pair<void *, void *> *pairs, int depth)
 		res = get_value(reinterpret_cast<std::pair<void *, void *> *>(pairs->first), depth - 1);
 	return (res);
 }
+
+void	delete_pair_down(std::pair<void *, void *> *pairs, int depth)
+{
+	if (depth == 0)
+		delete [] pairs;
+	else
+	{
+		delete_pair_down(reinterpret_cast<std::pair<void *, void *> *>(pairs->first), depth - 1);
+		delete [] pairs;
+	}
+	return ;
+}
