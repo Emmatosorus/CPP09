@@ -66,7 +66,7 @@ void	pair_up(std::pair<void *, void *> *&o_pairs, T & container, int & odd)
 }
 
 template <typename T>
-std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & container, int depth)
+std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & container, int depth, std::vector<std::pair<void *, void *> *> & gb_collector)
 {
 	int	value1;
 	int	value2;
@@ -74,18 +74,19 @@ std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & co
 	if (nb_pairs == 2)
 	{
 		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[1];
+		gb_collector.push_back(n_pairs);
 		value1 = get_value(&o_pairs[0], depth - 1);
 		value2 = get_value(&o_pairs[1], depth - 1);
 		if (value1 < value2)
 			*n_pairs = std::make_pair(reinterpret_cast<void *>(&o_pairs[0]), reinterpret_cast<void *>(&o_pairs[1]));
 		else
 			*n_pairs = std::make_pair(reinterpret_cast<void *>(&o_pairs[1]), reinterpret_cast<void *>(&o_pairs[0]));
-		std::cout << std::endl << depth << std::endl;
 		return (n_pairs);
 	}
 	else
 	{
 		std::pair<void *, void *> *n_pairs = new std::pair<void *, void *>[(int)(std::ceil(container.size() / pow(2, depth + 1)))];
+		gb_collector.push_back(n_pairs);
 		int i = 0;
 		int i2 = 0;
 		while (i < nb_pairs)
@@ -104,7 +105,7 @@ std::pair<void *, void *>	*pair_down(std::pair<void *, void *> *&o_pairs, T & co
 			i2++;
 			i += 2;
 		}
-		std::pair<void *, void *>	*ptr = pair_down(n_pairs, container, depth + 1);
+		std::pair<void *, void *>	*ptr = pair_down(n_pairs, container, depth + 1, gb_collector);
 		return (ptr);
 	}
 
@@ -117,7 +118,7 @@ void	sort( T & container )
 
 	std::pair<void *, void *>	*pairs = 0;
 	std::pair<void *, void *>	*new_pairs = 0;
-//	std::pair<void *, void *>	*pair_addr;
+	std::vector<std::pair<void *, void *> *>	gb_collector;
 
 	int	depth = 0;
 	int thing = 0;
@@ -130,7 +131,7 @@ void	sort( T & container )
 	int	odd = -1;
 
 	pair_up(pairs, container, odd);
-	new_pairs = pair_down(pairs, container, 1);
+	new_pairs = pair_down(pairs, container, 1, gb_collector);
 
 	// sort
 
@@ -139,5 +140,14 @@ void	sort( T & container )
 	std::cout << test << ", " << test2 << std::endl;
 	if (odd != -1)
 		std::cout << odd << std::endl;
-	delete_pair_down(new_pairs, depth - 3);
+
+	for (int i = 0; i < (int)gb_collector.size(); i++)
+		delete [] gb_collector [i];
+
+	delete [] pairs;
+
+
+
+
+
 }
