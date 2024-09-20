@@ -1,4 +1,5 @@
 #include "../includes/PmergeMe.h"
+#include "../includes/Templates.tpp"
 #include <iostream>
 #include <iomanip>
 
