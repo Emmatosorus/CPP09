@@ -18,7 +18,7 @@ int main(int ac, char **av)
 			throw std::invalid_argument("PmergeMe needs two intergers minimum to sort");
 		std::vector<int> vector;
 		parse(av, vector);
-		sort(vector);
+		// sort(vector);
 
 //		end = clock();
 
