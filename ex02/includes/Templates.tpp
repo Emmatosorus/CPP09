@@ -19,6 +19,7 @@ void	print(char **av, T container)
 	std::cout << "After :";
 	for (typename T::iterator it = container.begin(); it != container.end(); it++)
 		std::cout << " " << *it;
+	std::cout << std::endl;
 }
 
 template <typename T>
@@ -36,12 +37,4 @@ void	parse(char **input, T & container)
 		container.push_back(tmp);
 		i++;
 	}
-}
-
-template <typename T>
-void	sort( T & container )
-{
-	T	sorted;
-
-	(void)sorted;
 }

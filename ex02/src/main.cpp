@@ -1,5 +1,6 @@
 #include "../includes/PmergeMe.h"
 #include "../includes/Templates.tpp"
+#include "../includes/Sort.tpp"
 #include <iostream>
 #include <iomanip>
 
@@ -18,11 +19,11 @@ int main(int ac, char **av)
 			throw std::invalid_argument("PmergeMe needs two intergers minimum to sort");
 		std::vector<int> vector;
 		parse(av, vector);
-		// sort(vector);
+		sort(vector, 2);
 
 //		end = clock();
 
-//		print(av, vector);
+		print(av, vector);
 
 //		std::cout << std::endl;
 

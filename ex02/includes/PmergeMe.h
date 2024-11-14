@@ -17,5 +17,4 @@ bool	is_number(std::string nbr);
 int		jacobsthal(int index);
 int		get_value(std::pair<void *, void *> *pairs, int depth);
 
-
 #endif
