@@ -1,7 +1,7 @@
 #include "PmergeMe.h"
 
 template <typename T>
-bool is_exclusive(T container, int nb)
+bool is_exclusive(T container, size_t nb)
 {
 	for (typename T::iterator it = container.begin(); it != container.end(); ++it)
 		if (*it == nb)
@@ -31,7 +31,7 @@ void	parse(char **input, T & container)
 	{
 		if (!is_number(input[i]))
 			throw std::invalid_argument("PmergeMe only accepts positive numbers");
-		tmp = static_cast<int>(atof(input[i]));
+		tmp = static_cast<size_t>(atof(input[i]));
 		if (!is_exclusive(container, tmp))
 			throw std::invalid_argument("PmergeMe does not accept duplicate numbers");;
 		container.push_back(tmp);

@@ -17,7 +17,7 @@ int main(int ac, char **av)
 
 		if (ac < 3)
 			throw std::invalid_argument("PmergeMe needs two intergers minimum to sort");
-		std::vector<int> vector;
+		std::vector<size_t> vector;
 		parse(av, vector);
 		sort(vector, 2);
 

@@ -13,24 +13,86 @@ void	swap(T & start1, T & start2, size_t& pair_level)
 	}
 }
 
-//template <typename T>
-//void	binary_insertion(T pend, T container, T oddElement, size_t pair_level)
-//{
-//	typename T::iterator cmp;
-//	if (pend.size() < pair_level)
-//	{
-//		while (!pend.empty())
-//		{
-//			cmp = container.begin() + pair_level / 2 - 1;
-//			if (cmp )
-//		}
-//	}
-//	size_t jacobsthal_index = 1;
-//	(void)jacobsthal_index;
-//	(void)(oddElement);
-//
-//
-//}
+template <typename T>
+void	binary_search(T & container, T & to_insert, size_t element_size, size_t high)
+{
+	size_t bx = to_insert[element_size - 1];
+	size_t low = element_size -1;
+	size_t mid;
+
+	while (!to_insert.empty())
+	{
+		mid = ((((low + 1) / element_size) + (((high + 1) / element_size) - ((low + 1) / element_size)) / 2) * element_size) - 1;
+//		std::cout << "mid : " << mid << std::endl;
+		if (bx > container[mid])
+		{
+			if (mid == high || bx < container[mid + element_size])
+			{
+				container.insert(container.begin() + mid + 1, to_insert.begin(), to_insert.end());
+				return ;
+			}
+			else
+				low = mid + element_size;
+		}
+		else if (bx < container[mid])
+		{
+			if (mid == low)
+			{
+				container.insert(container.begin(), to_insert.begin(), to_insert.end());
+				return ;
+			}
+			else if (bx > container[mid - element_size])
+			{
+				container.insert(container.begin() + 1 + mid - element_size, to_insert.begin(), to_insert.end());
+				return ;
+			}
+			else
+				high = mid - element_size;
+		}
+	}
+}
+
+template <typename T>
+void	insert_all(T & pend, T & container, T & oddElement, size_t pair_level)
+{
+	typename T::iterator cmp;
+	T	to_insert;
+	if (pend.size() < pair_level)
+	{
+		binary_search(container, pend, pair_level / 2, 2 * (pair_level / 2) - 1);
+	}
+	else
+	{
+		size_t jacobsthal_index = 3;
+		size_t high;
+		size_t count = 1;
+		size_t	index = 2;
+		while (!pend.empty())
+		{
+
+			index = (jacobsthal(jacobsthal_index) - jacobsthal(jacobsthal_index - 1)) * pair_level / 2;
+			if (index > pend.size())
+				index = pend.size();
+			while (index != 0)
+			{
+				// high = (pair_level + (count + index - 1) * (pair_level / 2)) - 1;
+//				high = ((count + index - 2) * pair_level / 2) - 1;
+				high = container.size() - 1;
+				to_insert.insert(to_insert.begin(), pend.begin() + index - (pair_level / 2), pend.begin() + index);
+				pend.erase(pend.begin() + index - (pair_level / 2), pend.begin() + index);
+				binary_search(container, to_insert, pair_level / 2, high);
+				count++;
+				to_insert.clear();
+				index -= pair_level / 2;
+			}
+			jacobsthal_index++;
+		}
+	}
+	if (!oddElement.empty())
+	{
+		binary_search(container, oddElement, pair_level / 2, container.size() - 1);
+	}
+}
 
 template <typename T>
 void	sort( T & main, size_t pair_level )
@@ -54,6 +116,7 @@ void	sort( T & main, size_t pair_level )
 	T pend;
 	T container;
 	T oddElement;
+	T leftOvers;
 
 	typename T::iterator it = main.begin();
 	while ( it + pair_level - 1 < main.end())
@@ -72,12 +135,19 @@ void	sort( T & main, size_t pair_level )
 		it += pair_level;
 
 		if (it + pair_level - 1 >= main.end() && it + (pair_level / 2) - 1 < main.end())
+		{
 			oddElement.insert(oddElement.end(), it, it + (pair_level / 2));
+			leftOvers.insert(leftOvers.end(), it + (pair_level / 2), main.end());
+		}
 	}
 
 	// Insert pend then oddElement into container using binary insertion and jacobsthal numbers
-//	binary_insertion(pend, container, oddElement, pair_level);
+	if (!pend.empty())
+	{
+		insert_all(pend, container, oddElement, pair_level);
 
-
-
+		// copy container in the main
+		main = container;
+		main.insert(main.end(), leftOvers.begin(), leftOvers.end());
+	}
 }
