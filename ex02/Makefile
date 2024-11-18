@@ -1,6 +1,6 @@
 NAME = PmergeMe
 CPP = c++
-CPP_FLAGS = -Wall -Wextra -Werror -std=c++98 -MMD -g3
+CPP_FLAGS = -Wall -Wextra -Werror -std=c++98 -MMD -g3 #-fsanitize=address
 OBJ_DIR = .obj/
 SRC_DIR = src/
 

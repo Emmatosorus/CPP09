@@ -38,3 +38,26 @@ void	parse(char **input, T & container)
 		i++;
 	}
 }
+
+template <typename T>
+void	check(int ac, char **av, T array)
+{
+	if (ac - 1 != (int)array.size())
+	{
+		print(av, array);
+		throw std::runtime_error("\x1B[1mArray is not same size\x1B[0m");
+	}
+
+
+	typename T::iterator it = array.begin();
+	while (it + 1 != array.end())
+	{
+		if (*(it) > *(it + 1))
+		{
+			print(av, array);
+			throw std::runtime_error("\x1B[1mArray is not sorted\x1B[0m");
+		}
+		it++;
+	}
+	std::cout << "\x1B[1;32mArray is sorted!!!\x1B[0m" << std::endl;
+}

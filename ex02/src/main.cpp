@@ -6,51 +6,54 @@
 
 int main(int ac, char **av)
 {
-//	std::cout << ac - 1 << std::endl;
 	try
 	{
-//		clock_t	start;
-//		clock_t	end;
-
-//		start = clock();
-
-
 		if (ac < 3)
 			throw std::invalid_argument("PmergeMe needs two intergers minimum to sort");
+
+		clock_t	start_vector;
+		clock_t	start_deque;
+		clock_t	end_vector;
+		clock_t	end_deque;
+
+		// With vector
+
+		start_vector = clock();
+
 		std::vector<size_t> vector;
 		parse(av, vector);
 		sort(vector, 2);
 
-		if (ac - 1 != (int)vector.size())
-		{
-			print(av, vector);
-			throw std::runtime_error("\x1B[1mList is not same size\x1B[0m");
-		}
+		end_vector = clock();
 
+		// With deque
 
-		std::vector<size_t>::iterator it = vector.begin();
-		while (it + 1 != vector.end())
-		{
-			if (*(it) > *(it + 1))
-				 throw std::runtime_error("\x1B[1mList is not sorted\x1B[0m");
-			it++;
-		}
-		std::cout << "\x1B[1;32mList is sorted!!!\x1B[0m" << std::endl;
+		start_deque = clock();
 
+		std::deque<size_t> deque;
+		parse(av, deque);
+		sort(deque, 2);
 
-//		end = clock();
+		end_deque = clock();
+
+		check(ac, av, vector);
+		check(ac, av, deque);
 
 		print(av, vector);
 
-//		std::cout << std::endl;
 
-//		double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-//		std::cout << std::fixed << std::setprecision(6);
-//		std::cout << "Time to process a range of " << vector.size() << " elements with std::list : " << time_taken << " sec " << std::endl;
+		std::cout << std::endl;
+
+		double time_taken = double(end_vector - start_vector) / double(CLOCKS_PER_SEC);
+		std::cout << std::fixed << std::setprecision(6);
+		std::cout << "Time to process a range of " << vector.size() << " elements with std::vector : " << time_taken << " sec " << std::endl;
+		time_taken = double(end_deque - start_deque) / double(CLOCKS_PER_SEC);
+		std::cout << std::fixed << std::setprecision(6);
+		std::cout << "Time to process a range of " << deque.size() << " elements with std::vector : " << time_taken << " sec " << std::endl;
 	}
 	catch (std::exception & e)
 	{
-		std::cout << "Error : " << e.what() << std::endl;
+		std::cerr << "Error : " << e.what() << std::endl;
 		return (1);
 	}
 }
