@@ -23,7 +23,6 @@ void	binary_search(T & container, T & to_insert, size_t element_size, size_t hig
 	while (!to_insert.empty())
 	{
 		mid = ((((low + 1) / element_size) + (((high + 1) / element_size) - ((low + 1) / element_size)) / 2) * element_size) - 1;
-//		std::cout << "mid : " << mid << std::endl;
 		if (bx > container[mid])
 		{
 			if (mid == high || bx < container[mid + element_size])
@@ -52,6 +51,17 @@ void	binary_search(T & container, T & to_insert, size_t element_size, size_t hig
 	}
 }
 
+// high = (pair_level + (count + index - 1) * (pair_level / 2)) - 1;
+//				high = ((count + index - 2) * pair_level / 2) - 1;
+//				high = container.size() - 1;
+
+// b3 {b1 a1 a2}
+// {b1 a1 a2 b3}
+
+// b2 {b1 a1}
+// {b1 a1 b2 a2 b3}
+
+// b
 template <typename T>
 void	insert_all(T & pend, T & container, T & oddElement, size_t pair_level)
 {
@@ -65,23 +75,25 @@ void	insert_all(T & pend, T & container, T & oddElement, size_t pair_level)
 	{
 		size_t jacobsthal_index = 3;
 		size_t high;
-		size_t count = 1;
-		size_t	index = 2;
+		size_t count = 0;
+		size_t index = 2;
+		size_t decrease;
 		while (!pend.empty())
 		{
 
 			index = (jacobsthal(jacobsthal_index) - jacobsthal(jacobsthal_index - 1)) * pair_level / 2;
 			if (index > pend.size())
 				index = pend.size();
+			decrease = 0;
 			while (index != 0)
 			{
-				// high = (pair_level + (count + index - 1) * (pair_level / 2)) - 1;
-//				high = ((count + index - 2) * pair_level / 2) - 1;
-				high = container.size() - 1;
+//				high = ((jacobsthal(jacobsthal_index) + count) - decrease) * (pair_level / 2) - 1;
+				high = container.size();
 				to_insert.insert(to_insert.begin(), pend.begin() + index - (pair_level / 2), pend.begin() + index);
 				pend.erase(pend.begin() + index - (pair_level / 2), pend.begin() + index);
 				binary_search(container, to_insert, pair_level / 2, high);
 				count++;
+				decrease++;
 				to_insert.clear();
 				index -= pair_level / 2;
 			}
@@ -119,7 +131,7 @@ void	sort( T & main, size_t pair_level )
 	T leftOvers;
 
 	typename T::iterator it = main.begin();
-	while ( it + pair_level - 1 < main.end())
+	while ( it != main.end())
 	{
 		start = it + (pair_level / 2) - 1;
 		end = it + (pair_level - 1);
@@ -129,15 +141,21 @@ void	sort( T & main, size_t pair_level )
 			it += pair_level;
 			continue;
 		}
-		pend.insert(pend.end(), start - (pair_level / 2) + 1, start + 1);
-		container.insert(container.end(), start + 1, end + 1);
-
-		it += pair_level;
-
-		if (it + pair_level - 1 >= main.end() && it + (pair_level / 2) - 1 < main.end())
+		if (it + pair_level - 1 < main.end())
 		{
-			oddElement.insert(oddElement.end(), it, it + (pair_level / 2));
-			leftOvers.insert(leftOvers.end(), it + (pair_level / 2), main.end());
+			pend.insert(pend.end(), start - (pair_level / 2) + 1, start + 1);
+			container.insert(container.end(), start + 1, end + 1);
+			it += pair_level;
+		}
+		if (it + pair_level - 1 >= main.end())
+		{
+			if (it + (pair_level / 2) - 1 < main.end())
+			{
+				oddElement.insert(oddElement.end(), it, it + (pair_level / 2));
+				main.erase(it, it + (pair_level / 2));
+			}
+			leftOvers.insert(leftOvers.end(), it, main.end());
+			break ;
 		}
 	}
 
@@ -145,9 +163,12 @@ void	sort( T & main, size_t pair_level )
 	if (!pend.empty())
 	{
 		insert_all(pend, container, oddElement, pair_level);
+		oddElement.clear();
 
 		// copy container in the main
 		main = container;
 		main.insert(main.end(), leftOvers.begin(), leftOvers.end());
 	}
+	if (pair_level == 2 && !oddElement.empty())
+		binary_search(main, oddElement, oddElement.size(), main.size());
 }

@@ -21,6 +21,23 @@ int main(int ac, char **av)
 		parse(av, vector);
 		sort(vector, 2);
 
+		if (ac - 1 != (int)vector.size())
+		{
+			print(av, vector);
+			throw std::runtime_error("\x1B[1mList is not same size\x1B[0m");
+		}
+
+
+		std::vector<size_t>::iterator it = vector.begin();
+		while (it + 1 != vector.end())
+		{
+			if (*(it) > *(it + 1))
+				 throw std::runtime_error("\x1B[1mList is not sorted\x1B[0m");
+			it++;
+		}
+		std::cout << "\x1B[1;32mList is sorted!!!\x1B[0m" << std::endl;
+
+
 //		end = clock();
 
 		print(av, vector);
