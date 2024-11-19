@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <vector>
 #include <deque>
+#include <list>
 
 // **** function prototypes ****
 
