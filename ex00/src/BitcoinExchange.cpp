@@ -19,7 +19,7 @@ void	get_part_date(int & struct_date, std::string date, int & x)
 	std::string	date_str;
 	double		temp;
 
-	while (date[x] && date[x] != '-')
+	while (x < (int)date.size() && date[x] != '-')
 	{
 		if (date[x] < '0' || date[x] > '9')
 			throw std::runtime_error("Error : date must be a set of integers");
@@ -35,15 +35,15 @@ void	get_part_date(int & struct_date, std::string date, int & x)
 void	verify_date(t_date & date_struct)
 {
 	if (date_struct._month < 1 || date_struct._month > 12)
-		throw std::runtime_error("Error : date does not exist");
+		throw std::runtime_error("Error : incorrect date or format");
 	if (date_struct._day < 1 || date_struct._day > 31 || (date_struct._month == 2 && date_struct._day > 29))
-		throw std::runtime_error("Error : date does not exist");
+		throw std::runtime_error("Error : incorrect date or format");
 	if (date_struct._month == 2 && date_struct._day == 29)
 	{
 		if (date_struct._year % 4 != 0)
-			throw std::runtime_error("Error : date does not exist");
+			throw std::runtime_error("Error : incorrect date or format");
 		if (date_struct._year % 100 == 0 && date_struct._year % 400 != 0 )
-			throw std::runtime_error("Error : date does not exist");
+			throw std::runtime_error("Error : incorrect date or format");
 	}
 }
 
@@ -62,11 +62,13 @@ void	convert_line(std::string line, std::map<t_date,double> & map, char delimite
 	while (line[i] && line[++i] && (line[i] == ' ' || line[i] == delimiter))
 		;
 	int x = 0;
-	if (date[x] == '-')
+	if (date[x] && date[x] == '-')
 		x++;
 	get_part_date(date_struct._year, date, x);
-	get_part_date(date_struct._month, date, ++x);
-	get_part_date(date_struct._day, date, ++x);
+	x++;
+	get_part_date(date_struct._month, date, x);
+	x++;
+	get_part_date(date_struct._day, date, x);
 	verify_date(date_struct);
 	while (line[i])
 	{
