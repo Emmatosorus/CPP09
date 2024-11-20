@@ -5,7 +5,7 @@
 #include <stack>
 
 
-int		calculate(std::string input);
+double		calculate(std::string input);
 void	parse(std::string & parsed, std::string raw);
 
 

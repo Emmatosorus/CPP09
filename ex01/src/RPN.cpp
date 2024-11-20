@@ -1,9 +1,9 @@
 #include "../includes/RPN.h"
 
-int	calculate(std::string input)
+double	calculate(std::string input)
 {
-	std::stack<int> stack;
-	int	operands[2];
+	std::stack<double> stack;
+	double	operands[2];
 	int i = 0;
 
 	while (input[i])
@@ -32,7 +32,11 @@ int	calculate(std::string input)
 			else if (input[i] == '*')
 				stack.push(operands[1] * operands[0]);
 			else if (input[i] == '/')
+			{
+				if (operands[0] == 0)
+					throw std::invalid_argument("cannot devide by 0");
 				stack.push(operands[1] / operands[0]);
+			}
 		}
 		i++;
 	}
