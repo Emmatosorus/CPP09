@@ -16,7 +16,7 @@ int main(int ac, char **av)
 		clock_t	end_vector;
 		clock_t	end_deque;
 
-		// With vector
+		// ----------- With vector -----------
 
 		start_vector = clock();
 
@@ -26,7 +26,7 @@ int main(int ac, char **av)
 
 		end_vector = clock();
 
-		// With deque
+		// ----------- With deque -----------
 
 		start_deque = clock();
 
@@ -36,20 +36,23 @@ int main(int ac, char **av)
 
 		end_deque = clock();
 
+		// ----------- Check that both lists are sorted (optionnal)
+		
 		check(ac, av, vector);
 		check(ac, av, deque);
 
+		// ----------- Print the Before and After
+
 		print(av, vector);
 
-
-		std::cout << std::endl;
+		// ----------- Display duration of sort
 
 		double time_taken = double(end_vector - start_vector) / double(CLOCKS_PER_SEC);
 		std::cout << std::fixed << std::setprecision(6);
 		std::cout << "Time to process a range of " << vector.size() << " elements with std::vector : " << time_taken << " sec " << std::endl;
 		time_taken = double(end_deque - start_deque) / double(CLOCKS_PER_SEC);
 		std::cout << std::fixed << std::setprecision(6);
-		std::cout << "Time to process a range of " << deque.size() << " elements with std::vector : " << time_taken << " sec " << std::endl;
+		std::cout << "Time to process a range of " << deque.size() << " elements with std::deque : " << time_taken << " sec " << std::endl;
 	}
 	catch (std::exception & e)
 	{

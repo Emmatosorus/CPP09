@@ -8,8 +8,13 @@ int	calculate(std::string input)
 
 	while (input[i])
 	{
-		if (input[i] >= '0' && input[i] <= '9')
+		if (std::isdigit(input[i]))
+		{
+			if (i + 1 >= (int)input.size())
+				throw std::invalid_argument("incorrect number of operators");
 			stack.push(input[i] - 48);
+
+		}
 		else
 		{
 			if (stack.empty())
@@ -21,28 +26,18 @@ int	calculate(std::string input)
 			operands[1] = stack.top();
 			stack.pop();
 			if (input[i] == '+')
-			{
-			//	std::cout << operands[1] << " + " << operands[0] << " = " << operands[1] + operands[0] << std::endl;
 				stack.push(operands[1] + operands[0]);
-			}
 			else if (input[i] == '-')
-			{
-			//	std::cout << operands[1] << " - " << operands[0] << " = " << operands[1] - operands[0] << std::endl;
 				stack.push(operands[1] - operands[0]);
-			}
 			else if (input[i] == '*')
-			{
-			//	std::cout << operands[1] << " * " << operands[0] << " = " << operands[1] * operands[0] << std::endl;
 				stack.push(operands[1] * operands[0]);
-			}
 			else if (input[i] == '/')
-			{
-			//	std::cout << operands[1] << " / " << operands[0] << " = " << operands[1] / operands[0] << std::endl;
 				stack.push(operands[1] / operands[0]);
-			}
 		}
 		i++;
 	}
+	if (stack.size() > 1)
+		throw std::invalid_argument("incorrect number of operators");
 	return (stack.top());
 }
 
