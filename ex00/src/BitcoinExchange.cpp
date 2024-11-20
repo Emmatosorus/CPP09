@@ -54,6 +54,9 @@ void	convert_line(std::string line, std::map<t_date,double> & map, char delimite
 	std::string	date;
 	std::string	value;
 
+	size_t d_pos = line.find(delimiter, 0);
+	if (d_pos == std::string::npos)
+		throw std::invalid_argument("Error : line must contain delimiter");
 	int i = 0;
 	while (line[i] && line[i] == ' ')
 		i++;
@@ -68,10 +71,18 @@ void	convert_line(std::string line, std::map<t_date,double> & map, char delimite
 	get_part_date(date_struct._month, date, ++x);
 	get_part_date(date_struct._day, date, ++x);
 	verify_date(date_struct);
+	bool	found_point = false;
 	while (line[i])
 	{
-		if (line[i] != '.' && (line[i] < '0' || line[i] > '9'))
+		if (line[i] != '.' && line[i] != '+' && (line[i] < '0' || line[i] > '9'))
 			throw std::invalid_argument("Error : value must be a positive integer");
+		if (line[i] == '.')
+		{
+			if (found_point)
+				throw std::invalid_argument("Error : invalid value");
+			else
+				found_point = true;
+		}
 		value += line[i];
 		i++;
 	}
